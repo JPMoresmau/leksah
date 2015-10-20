@@ -83,6 +83,7 @@ module IDE.Pane.SourceBuffer (
 ,   insertTextAfterSelection
 ,   selectedModuleName
 ,   selectedLocation
+,   selectedRange
 ,   recentSourceBuffers
 ,   newTextBuffer
 ,   belongsToPackages
@@ -1402,6 +1403,7 @@ selectedText = do
                 return $ Just text
             else return Nothing
 
+-- | Retrieve the currently selected text. If empty, tries to return the line on which the caret is
 selectedTextOrCurrentLine :: IDEM (Maybe Text)
 selectedTextOrCurrentLine = do
     candy' <- readIDE candy
@@ -1417,18 +1419,29 @@ selectedTextOrCurrentLine = do
                 return (iStart, iEnd)
         Just <$> getCandylessPart candy' ebuf i1 i2
 
+-- | Get the currently selected location (line, column)
 selectedLocation :: IDEM (Maybe (Int, Int))
-selectedLocation = do
+selectedLocation = fmap fst <$> selectedRange
+
+-- | Get the currently selected range (start line and column, end line and column)
+selectedRange :: IDEM (Maybe ((Int, Int),(Int,Int)))
+selectedRange = do
     candy'      <- readIDE candy
     inActiveBufContext Nothing $ \_ _ ebuf currentBuffer _ -> do
         useCandy   <- useCandyFor currentBuffer
-        (start, _) <- getSelectionBounds ebuf
-        line       <- getLine start
-        lineOffset <- getLineOffset start
-        res <- if useCandy
-            then positionFromCandy candy' ebuf (line, lineOffset)
-            else return (line, lineOffset)
-        return $ Just res
+        (start, end) <- getSelectionBounds ebuf
+        let toCandy = toLineAndOffset candy' useCandy ebuf
+        cStart <- toCandy start
+        cEnd <- toCandy end
+        return $ Just (cStart,cEnd)
+  where toLineAndOffset candy' useCandy ebuf start = do
+                line       <- getLine start
+                lineOffset <- getLineOffset start
+                res <- if useCandy
+                    then positionFromCandy candy' ebuf (line, lineOffset)
+                    else return (line, lineOffset)
+                return res
+
 
 insertTextAfterSelection :: Text -> IDEAction
 insertTextAfterSelection str = do

@@ -1058,6 +1058,22 @@ msgstr ""
 msgid "Select a special style?"
 msgstr ""
 
+#: src/IDE/Pane/Preferences.hs:0
+msgid "Helper programs"
+msgstr ""
+
+#: src/IDE/Pane/Preferences.hs:0
+msgid "Use ghc-mod?"
+msgstr ""
+
+#: src/IDE/Pane/Preferences.hs:0
+msgid "Path:"
+msgstr ""
+
+#: src/IDE/Pane/Preferences.hs:0
+msgid "..."
+msgstr ""
+
 #: src/IDE/Pane/Search.hs:0
 msgid "Search"
 msgstr ""
@@ -2242,3 +2258,6 @@ msgstr ""
 msgid "No workspace for build."
 msgstr ""
 
+#: src/IDE/GhcMod.hs:0
+msgid "ghc-mod type"
+msgstr ""

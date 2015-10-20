@@ -521,6 +521,7 @@ data Prefs = Prefs {
     ,   serverIP            ::   Text
     ,   showHiddenFiles     ::   Bool
     ,   showWorkspaceIcons  ::   Bool
+    ,   ghcModPath          ::   Maybe FilePath -- ^ Path to ghc-mod if we want to use it
             -- As well used by server
     ,   serverPort          ::   Int
     ,   sourceDirectories   ::   [FilePath]

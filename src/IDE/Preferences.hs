@@ -170,7 +170,9 @@ runPreferencesDialog = reifyIDE $ \ideR -> do
                                 Nothing -> False
                                 Just p -> p{prefsFormat = 0, prefsSaveTime = ""} /=
                                           initialPrefs{prefsFormat = 0, prefsSaveTime = ""}
-        when (isJust mbP) $ labelSetMarkup errorLabel ("" :: Text)
+        when (isJust mbP) $ do
+            labelSetMarkup errorLabel ("" :: Text)
+            widgetSetSensitive apply True
         return (e{gtkReturn=False}))
 
     registerEvent notifier ValidationError $ \e -> do
@@ -801,6 +803,16 @@ prefsDescription configDir packages = NFDPP [
             (\b a -> a{docuSearchURL = b})
             (textEditor (not . T.null) True)
             (\i -> return ())
+    ]),
+    (__ "Helper programs", VFDPP emptyParams [
+        mkFieldPP
+            (paraName <<<- ParaName (__ "Use ghc-mod?") $ emptyParams)
+            (PP.text . show)
+            readParser
+            ghcModPath
+            (\b a -> a{ghcModPath = b})
+            (maybeEditor ((fileEditor Nothing FileChooserActionOpen(__ "...")),emptyParams) True (__ "Path:"))
+            (\i -> return ())
     ])]
 
 getActiveSettings :: PaneMonad alpha => alpha (Maybe Settings)
@@ -923,7 +935,8 @@ defaultPrefs = Prefs {
     ,   serverIP            =   "127.0.0.1"
     ,   endWithLastConn     =   True
     ,   showHiddenFiles     =   False
-    ,   showWorkspaceIcons       =   True
+    ,   showWorkspaceIcons         =   True
+    ,   ghcModPath                 = Nothing
     }
 
 -- ------------------------------------------------------------

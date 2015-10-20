@@ -293,6 +293,7 @@ library
         IDE.Utils.ServerConnection
         IDE.BufferMode
         IDE.Build
+        IDE.GhcMod
         IDE.Command.VCS
         IDE.Command.VCS.Common
         IDE.Command.VCS.SVN
